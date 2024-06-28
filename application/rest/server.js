@@ -50,6 +50,26 @@ app.get('/querypoint', function (req, res) {
    sdk.send(true, 'queryPoint', args, res);
 });
 
+app.get('/queryAll', function (req, res) {
+   let name = req.query.name;
+   let args = [name];
+   sdk.send(true, 'queryAll', args, res);
+ });
+
+app.get('/purchaseBook', function (req, res) {
+   let userID = req.query.userID;
+   let bookID = req.query.bookID;
+   let args = [userID, bookID];
+   sdk.send(false, 'purchaseBook', args, res);
+});
+
+app.get('/chargeMoney', function (req, res) {
+   let userID = req.query.userID;
+   let amount = req.query.amount;
+   let args = [userID, amount];
+   sdk.send(false, 'chargeMoney', args, res);
+});
+
 app.use(express.static(path.join(__dirname, '../client')));
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

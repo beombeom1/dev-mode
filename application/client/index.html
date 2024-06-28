@@ -45,6 +45,14 @@
         A Value: <input class="form-control" type="text" placeholder="Ex: 100" ng-model="abstore.aval">
         A Point: <input class="form-control" type="text" placeholder="Ex: 100" ng-model="abstore.apoint">
         <input id="initAB" type="submit" value="Create" class="btn btn-primary" ng-click="initAB()">
+      </div>
+      <div class="form-group">
+        <label>Charge Money</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_chargeMoney">{{chargeMoney_ab}}</h5>
+        <br>
+        User ID: <input class="form-control" type="text" placeholder="Ex: User1" ng-model="chargeMoneyDetails.userID">
+        Amount: <input class="form-control" type="text" placeholder="Ex: 100" ng-model="chargeMoneyDetails.amount">
+        <input id="chargeMoney" type="submit" value="Charge" class="btn btn-primary" ng-click="chargeMoney()">
     </div>
       <hr>
       <div class="form-group">
@@ -83,6 +91,14 @@
             <input id="queryPoint" type="submit" value="Search Point" class="btn btn-primary" ng-click="queryPoint()">
         </p>
     </div>
+    <div class="form-group">
+      <h5 style="color:purple;margin-bottom:2%" id="success_query_all">{{query_all}}</h5>
+      <label>User</label>
+      <p>
+          <input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
+          <input id="queryAll" type="submit" value="Search All" class="btn btn-primary" ng-click="queryAll()">
+      </p>
+  </div>
       <hr>
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_qurey_admin">{{query_admin}}</h5>
@@ -96,6 +112,26 @@
         <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="deleteid">
         <input id="deleteAB" type="submit" value="Delete" class="btn btn-primary" ng-click="deleteAB()"></p>
       </div>
+      <div class="form-group">
+        <label>Purchase Book</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_purchaseBook">{{purchaseBook_ab}}</h5>
+        <br>
+        User ID: <input class="form-control" type="text" placeholder="Ex: User1" ng-model="purchaseBookDetails.userID">
+        Book ID: 
+        <select class="form-control" ng-model="purchaseBookDetails.bookID">
+            <option value="book1">Book 1 (8000)</option>
+            <option value="book2">Book 2 (9000)</option>
+            <option value="book3">Book 3 (7500)</option>
+            <option value="book4">Book 4 (10000)</option>
+            <option value="book5">Book 5 (5000)</option>
+            <option value="book6">Book 6 (6000)</option>
+            <option value="book7">Book 7 (8500)</option>
+            <option value="book8">Book 8 (9500)</option>
+            <option value="book9">Book 9 (7000)</option>
+            <option value="book10">Book 10 (12000)</option>
+        </select>
+        <input id="purchaseBook" type="submit" value="Purchase" class="btn btn-primary" ng-click="purchaseBook()">
+    </div>
     </div>
   </body>
   <script type="text/javascript" src="app.js"> </script>
