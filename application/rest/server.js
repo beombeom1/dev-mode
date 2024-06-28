@@ -30,6 +30,14 @@ app.get('/invoke', function (req, res) {
    sdk.send(false, 'invoke', args, res);
 });
 
+app.get('/invokePoint', function (req, res) {
+   let sender = req.query.sender;
+   let receiver = req.query.receiver;
+   let amount = req.query.amount;
+   let args = [sender, receiver, amount];
+   sdk.send(false, 'invokePoint', args, res);
+});
+
 app.get('/query', function (req, res) {
    let name = req.query.name;
    let args = [name];

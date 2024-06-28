@@ -24,6 +24,14 @@ app.controller('AppCtrl', function($scope, appFactory){
            $("#success_invoke").show();
        });
    }
+   $scope.invokePointAB = function(){
+    $("#success_invoke_point").hide();
+    appFactory.invokePointAB($scope.invoke_point, function(data){
+        if(data == "")
+            $scope.invoke_point_ab = "success";
+        $("#success_invoke_point").show();
+    });
+ }
    $scope.queryAB = function(){
        $("#success_qurey").hide();
        appFactory.queryAB($scope.walletid, function(data){
@@ -65,6 +73,11 @@ app.factory('appFactory', function($http){
     }
     factory.invokeAB = function(data, callback){
         $http.get('/invoke?sender='+data.sender+'&receiver='+data.receiver+'&amount='+data.amount).success(function(output){
+            callback(output)
+        });
+    }
+    factory.invokePointAB = function(data, callback){
+        $http.get('/invokePoint?sender='+data.sender+'&receiver='+data.receiver+'&amount='+data.amount).success(function(output){
             callback(output)
         });
     }

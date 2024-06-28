@@ -57,6 +57,46 @@ const ABstore = class {
     await stub.putState(A + '_point', Buffer.from(Apoint));
 }
 
+async invokePoint(stub, args) {
+  if (args.length != 3) {
+    throw new Error('Incorrect number of arguments. Expecting 3');
+  }
+
+  let A = args[0];
+  let B = args[1];
+
+  if (!A || !B) {
+    throw new Error('Asset holding must not be empty');
+  }
+
+  // Get the points state from the ledger
+  let ApointBytes = await stub.getState(A + '_point');
+  if (!ApointBytes || ApointBytes.length === 0) {
+    throw new Error('Failed to get state of asset holder A');
+  }
+  let Apoints = parseInt(ApointBytes.toString());
+
+  let BpointBytes = await stub.getState(B + '_point');
+  if (!BpointBytes || BpointBytes.length === 0) {
+    throw new Error('Failed to get state of asset holder B');
+  }
+  let Bpoints = parseInt(BpointBytes.toString());
+
+  // Perform the execution
+  let amount = parseInt(args[2]);
+  if (typeof amount !== 'number') {
+    throw new Error('Expecting integer value for amount to be transferred');
+  }
+
+  Apoints = Apoints - amount;
+  Bpoints = Bpoints + amount;
+  console.info(`Apoints = ${Apoints}, Bpoints = ${Bpoints}`);
+
+  // Write the states back to the ledger
+  await stub.putState(A + '_point', Buffer.from(Apoints.toString()));
+  await stub.putState(B + '_point', Buffer.from(Bpoints.toString()));
+}
+
   async invoke(stub, args) {
     if (args.length != 3) {
       throw new Error('Incorrect number of arguments. Expecting 3');
