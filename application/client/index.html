@@ -43,8 +43,9 @@
         <br>
         A: <input class="form-control" type="text" placeholder="Ex: Hyper" ng-model="abstore.a">
         A Value: <input class="form-control" type="text" placeholder="Ex: 100" ng-model="abstore.aval">
+        A Point: <input class="form-control" type="text" placeholder="Ex: 100" ng-model="abstore.apoint">
         <input id="initAB" type="submit" value="Create" class="btn btn-primary" ng-click="initAB()">
-      </div>
+    </div>
       <hr>
       <div class="form-group">
         <label>Invoke</label>
@@ -59,10 +60,19 @@
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_qurey">{{query_ab}}</h5>
         <label>User</label>
-        <p><input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
-        <input id="queryAB" type="submit" value="Search" class="btn btn-primary" ng-click="queryAB()"></p>
-      </div>
-      <hr>
+        <p>
+            <input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
+            <input id="queryAB" type="submit" value="Search Value" class="btn btn-primary" ng-click="queryAB()">
+        </p>
+    </div>
+    <div class="form-group">
+        <h5 style="color:blue;margin-bottom:2%" id="success_point_qurey">{{query_point}}</h5>
+        <label>User</label>
+        <p>
+            <input class="form-control" type="text" placeholder="Ex: A" ng-model="walletid">
+            <input id="queryPoint" type="submit" value="Search Point" class="btn btn-primary" ng-click="queryPoint()">
+        </p>
+    </div>
       <hr>
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_qurey_admin">{{query_admin}}</h5>

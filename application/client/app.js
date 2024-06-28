@@ -9,13 +9,13 @@ app.controller('AppCtrl', function($scope, appFactory){
    $("#success_qurey_admin").hide();
    $("#success_delete").hide();
    $scope.initAB = function(){
-   $("#success_init").hide();
-       appFactory.initAB($scope.abstore, function(data){
-           if(data == "")
-           $scope.init_ab = "success";
-           $("#success_init").show();
-       });
-   }
+    $("#success_init").hide();
+    appFactory.initAB($scope.abstore, function(data){
+        if(data == "")
+            $scope.init_ab = "success";
+        $("#success_init").show();
+    });
+ }
    $scope.invokeAB = function(){
        $("#success_invoke").hide();
        appFactory.invokeAB($scope.invoke, function(data){
@@ -31,6 +31,13 @@ app.controller('AppCtrl', function($scope, appFactory){
            $("#success_qurey").show();
        });
    }
+   $scope.queryPoint = function(){
+    $("#success_point_qurey").hide();
+    appFactory.queryPoint($scope.walletid, function(data){
+        $scope.query_point = data;
+        $("#success_point_qurey").show();
+    });
+ }
    $scope.queryAdmin = function(){
        $("#success_qurey_admin").hide();
        appFactory.queryAB("admin", function(data){
@@ -52,8 +59,8 @@ app.factory('appFactory', function($http){
     var factory = {};
  
     factory.initAB = function(data, callback){
-        $http.get('/init?user='+data.a+'&userVal='+data.aval+'&b='+data.b+'&bval='+data.bval+'&c='+data.c+'&cval='+data.cval).success(function(output){
-            callback(output)
+        $http.get('/init?user='+data.a+'&userVal='+data.aval+'&userPoint='+data.apoint).success(function(output){
+            callback(output);
         });
     }
     factory.invokeAB = function(data, callback){
@@ -64,6 +71,11 @@ app.factory('appFactory', function($http){
     factory.queryAB = function(name, callback){
         $http.get('/query?name='+name).success(function(output){
             callback(output)
+        });
+    }
+    factory.queryPoint = function(name, callback){
+        $http.get('/querypoint?name='+name).success(function(output){
+            callback(output);
         });
     }
     factory.deleteAB = function(name, callback){

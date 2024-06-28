@@ -11,7 +11,8 @@ app.use(express.urlencoded({ extended: true }))
 app.get('/init', function (req, res) {
    let user = req.query.user;
    let userVal = req.query.userVal;
-   let args = [user, userVal];
+   let userPoint = req.query.userPoint;
+   let args = [user, userVal, userPoint];
    sdk.send(false, 'init', args, res);
 });
 
@@ -33,6 +34,12 @@ app.get('/query', function (req, res) {
    let name = req.query.name;
    let args = [name];
    sdk.send(true, 'query', args, res);
+});
+
+app.get('/querypoint', function (req, res) {
+   let name = req.query.name;
+   let args = [name + '_point'];
+   sdk.send(true, 'queryPoint', args, res);
 });
 
 app.use(express.static(path.join(__dirname, '../client')));

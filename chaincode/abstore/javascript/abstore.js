@@ -15,12 +15,12 @@ const ABstore = class {
     let ret = stub.getFunctionAndParameters();
     console.info(ret);
     try {
-      await stub.putState("admin", Buffer.from("0"));
-      return shim.success();
+        await stub.putState("admin", Buffer.from("0"));
+        return shim.success();
     } catch (err) {
-      return shim.error(err);
+        return shim.error(err);
     }
-  }
+}
 
   async Invoke(stub) {
     let ret = stub.getFunctionAndParameters();
@@ -40,20 +40,22 @@ const ABstore = class {
   }
 
   async init(stub, args) {
-    // initialise only if 2 parameters passed.
-    if (args.length != 2) {
-      return shim.error('Incorrect number of arguments. Expecting 2');
+    // initialise only if 3 parameters passed.
+    if (args.length != 3) {
+        return shim.error('Incorrect number of arguments. Expecting 3');
     }
 
     let A = args[0];
     let Aval = args[1];
+    let Apoint = args[2];
 
-    if (typeof parseInt(Aval) !== 'number') {
-      return shim.error('Expecting integer value for asset holding');
+    if (typeof parseInt(Aval) !== 'number' || typeof parseInt(Apoint) !== 'number') {
+        return shim.error('Expecting integer value for asset holding and point');
     }
 
     await stub.putState(A, Buffer.from(Aval));
-  }
+    await stub.putState(A + '_point', Buffer.from(Apoint));
+}
 
   async invoke(stub, args) {
     if (args.length != 3) {
@@ -140,6 +142,28 @@ const ABstore = class {
     console.info(jsonResp);
     return Avalbytes;
   }
+
+  async queryPoint(stub, args) {
+    if (args.length != 1) {
+      throw new Error('Incorrect number of arguments. Expecting name of the person to query');
+    }
+
+    let jsonResp = {};
+    let A = args[0];
+
+    // Get the state from the ledger
+    let Avalbytes = await stub.getState(A);
+    if (!Avalbytes || Avalbytes.length === 0) {
+      jsonResp.error = 'Failed to get state for ' + A;
+      throw new Error(JSON.stringify(jsonResp));
+    }
+
+    jsonResp.name = A;
+    jsonResp.points = Avalbytes.toString();
+    console.info('Query Point Response:');
+    console.info(jsonResp);
+    return Avalbytes;
+}
 };
 
 shim.start(new ABstore());
