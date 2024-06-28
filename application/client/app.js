@@ -46,6 +46,13 @@ app.controller('AppCtrl', function($scope, appFactory){
         $("#success_point_qurey").show();
     });
  }
+ $scope.queryAll = function(){
+    $("#success_query_all").hide();
+    appFactory.queryAll($scope.walletid, function(data){
+        $scope.query_all = data;
+        $("#success_query_all").show();
+    });
+ }
    $scope.queryAdmin = function(){
        $("#success_qurey_admin").hide();
        appFactory.queryAB("admin", function(data){
@@ -59,6 +66,28 @@ app.controller('AppCtrl', function($scope, appFactory){
             if(data == "")
             $scope.delete_ab = "success";
             $("#success_delete").show();
+        });
+    }
+    $scope.purchaseBook = function(){
+        $("#success_purchaseBook").hide();
+        appFactory.purchaseBook($scope.purchaseBookDetails, function(data){
+            if(data == "Purchase successful") {
+                $scope.purchaseBook_ab = "success";
+            } else {
+                $scope.purchaseBook_ab = "failed";
+            }
+            $("#success_purchaseBook").show();
+        });
+    }
+    $scope.chargeMoney = function() {
+        $("#success_chargeMoney").hide();
+        appFactory.chargeMoney($scope.chargeMoneyDetails, function(data){
+            if(data == "Charge successful") {
+                $scope.chargeMoney_ab = "success";
+            } else {
+                $scope.chargeMoney_ab = "failed";
+            }
+            $("#success_chargeMoney").show();
         });
     }
 });
@@ -91,9 +120,25 @@ app.factory('appFactory', function($http){
             callback(output);
         });
     }
+    factory.queryAll = function(name, callback){
+        $http.get('/queryAll?name='+name).success(function(output){
+            callback(output);
+        });
+    }
     factory.deleteAB = function(name, callback){
         $http.get('/delete?name='+name).success(function(output){
             callback(output)
+        });
+    }
+    factory.purchaseBook = function(data, callback){
+        $http.get('/purchaseBook?userID='+data.userID+'&bookID='+data.bookID).success(function(output){
+            callback(output);
+        });
+    }
+
+    factory.chargeMoney = function(data, callback){
+        $http.get('/chargeMoney?userID='+data.userID+'&amount='+data.amount).success(function(output){
+            callback(output);
         });
     }
     return factory;

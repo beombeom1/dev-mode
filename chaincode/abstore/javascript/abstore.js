@@ -204,6 +204,140 @@ async invokePoint(stub, args) {
     console.info(jsonResp);
     return Avalbytes;
 }
+
+// New function to query both cash and points
+async queryAll(stub, args) {
+  if (args.length != 1) {
+    throw new Error('Incorrect number of arguments. Expecting name of the person to query');
+  }
+
+  let jsonResp = {};
+  let A = args[0];
+
+  // Get the cash state from the ledger
+  let Avalbytes = await stub.getState(A);
+  if (!Avalbytes) {
+    jsonResp.error = 'Failed to get state for ' + A;
+    throw new Error(JSON.stringify(jsonResp));
+  }
+  jsonResp.name = A;
+  jsonResp.amount = Avalbytes.toString();
+
+  // Get the points state from the ledger
+  let ApointBytes = await stub.getState(A + '_point');
+  if (!ApointBytes || ApointBytes.length === 0) {
+    jsonResp.error = 'Failed to get state for ' + A + '_point';
+    throw new Error(JSON.stringify(jsonResp));
+  }
+  jsonResp.points = ApointBytes.toString();
+
+  console.info('Query All Response:');
+  console.info(jsonResp);
+  return Buffer.from(JSON.stringify(jsonResp));
+}
+
+async purchaseBook(stub, args) {
+  if (args.length != 2) {
+      throw new Error('Incorrect number of arguments. Expecting 2');
+  }
+
+  let userID = args[0];
+  let bookID = args[1];
+
+  // Hardcoded book prices
+  const bookPrices = {
+      book1: 8000,
+      book2: 9000,
+      book3: 7500,
+      book4: 10000,
+      book5: 5000,
+      book6: 6000,
+      book7: 8500,
+      book8: 9500,
+      book9: 7000,
+      book10: 12000
+  };
+
+  let bookPrice = bookPrices[bookID];
+  if (!bookPrice) {
+      throw new Error('Invalid book ID');
+  }
+
+  let userCashKey = userID;
+  let userPointsKey = userID + '_point';
+  let adminKey = 'admin';
+
+  // Get user cash and points
+  let userCashBytes = await stub.getState(userCashKey);
+  let userPointsBytes = await stub.getState(userPointsKey);
+  let adminBytes = await stub.getState(adminKey);
+
+  if (!userCashBytes || userCashBytes.length === 0) {
+      throw new Error('User cash balance not found');
+  }
+  if (!userPointsBytes || userPointsBytes.length === 0) {
+      throw new Error('User points balance not found');
+  }
+  if (!adminBytes || adminBytes.length === 0) {
+      throw new Error('Admin balance not found');
+  }
+
+  let userCash = parseInt(userCashBytes.toString());
+  let userPoints = parseInt(userPointsBytes.toString());
+  let adminBalance = parseInt(adminBytes.toString());
+
+  let totalPrice = bookPrice;
+  let pointsUsed = Math.min(userPoints, totalPrice);
+  let cashNeeded = totalPrice - pointsUsed;
+
+  if (userCash < cashNeeded) {
+      throw new Error('Insufficient funds');
+  }
+
+  // Deduct points and cash
+  userPoints -= pointsUsed;
+  userCash -= cashNeeded;
+
+  // Add points for the purchase (10% of the book price)
+  let pointsEarned = bookPrice * 0.10;
+  userPoints += pointsEarned;
+
+  // Update admin balance
+  adminBalance += bookPrice * 0.10;
+
+  // Write the new states back to the ledger
+  await stub.putState(userCashKey, Buffer.from(userCash.toString()));
+  await stub.putState(userPointsKey, Buffer.from(userPoints.toString()));
+  await stub.putState(adminKey, Buffer.from(adminBalance.toString()));
+
+  console.info(`User ${userID} purchased ${bookID} for ${bookPrice} units: ${pointsUsed} points and ${cashNeeded} cash used.`);
+  return Buffer.from('Purchase successful');
+}
+async chargeMoney(stub, args) {
+  if (args.length != 2) {
+      throw new Error('Incorrect number of arguments. Expecting 2');
+  }
+
+  let userID = args[0];
+  let amount = parseInt(args[1]);
+
+  if (typeof amount !== 'number' || amount <= 0) {
+      throw new Error('Expecting positive integer value for amount');
+  }
+
+  let userCashBytes = await stub.getState(userID);
+  if (!userCashBytes || userCashBytes.length === 0) {
+      throw new Error('User not found');
+  }
+
+  let userCash = parseInt(userCashBytes.toString());
+  userCash += amount;
+
+  await stub.putState(userID, Buffer.from(userCash.toString()));
+
+  console.info(`User ${userID} charged with ${amount} units.`);
+  return Buffer.from('Charge successful');
+}
 };
 
 shim.start(new ABstore());
